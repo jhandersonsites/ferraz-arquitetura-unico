@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script>window.__resources={};/* single-file build: the runtime must not re-read this page's own source */</script>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preload" as="script" href="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous">
+<link rel="preload" as="script" href="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous">
+<script>window.__resources={};/* arquivo unico: o motor nao deve reler o proprio codigo-fonte desta pagina */</script>
 <script>
 // GENERATED from dc-runtime/src/*.ts — do not edit. Rebuild with `cd dc-runtime && bun run build`.
 "use strict";
@@ -1919,6 +1922,51 @@
 
 </script>
 <script>
+(function () {
+  'use strict';
+  var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  var pending = new WeakMap();
+  function sized(slot, url) {
+    try {
+      var u = new URL(url, location.href);
+      if (!/(^|\.)images\.unsplash\.com$/.test(u.hostname)) return url;
+      var w = parseInt(u.searchParams.get('w'), 10);
+      if (!w) return url;
+      var cw = slot.getBoundingClientRect().width;
+      if (!cw || cw < 40) cw = window.innerWidth;
+      var want = Math.max(600, Math.ceil(cw * dpr / 200) * 200);
+      if (w > want) { u.searchParams.set('w', String(want)); return u.toString(); }
+    } catch (e) {}
+    return url;
+  }
+  function load(slot, url) {
+    var real = sized(slot, url);
+    slot._img.src = real; slot._ghost.src = real;
+  }
+  window.__fx = {
+    slotUrl: function (slot, url) {
+      /* the hero photo is the largest paint: fetch it first, at full priority */
+      if (slot.id === 'hero-obra') { try { slot._img.setAttribute('fetchpriority', 'high'); } catch (e) {} return sized(slot, url); }
+      if (!('IntersectionObserver' in window)) return sized(slot, url);
+      var r = slot.getBoundingClientRect();
+      var hidden = !r.width && !r.height;      /* inside the template or not attached yet */
+      if (!hidden && r.top < window.innerHeight * 1.6 && r.bottom > -window.innerHeight * 0.6) return sized(slot, url);
+      var st = pending.get(slot);
+      if (st && st.url === url) return null;
+      if (st) st.io.disconnect();
+      var io = new IntersectionObserver(function (es) {
+        for (var i = 0; i < es.length; i++) {
+          if (es[i].isIntersecting) { io.disconnect(); pending.delete(slot); load(slot, url); break; }
+        }
+      }, { rootMargin: '900px 0px' });
+      io.observe(slot);
+      pending.set(slot, { io: io, url: url });
+      return null;
+    }
+  };
+})();
+</script>
+<script>
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
 // Copied omelette starter. Re-running copy_starter_component with this kind overwrites this file with the latest version (page content is unaffected).
 /* BEGIN USAGE */
@@ -3059,8 +3107,8 @@
           // (the pick path's credit/credit-href setAttributes) need this
           // flag, not complete, to know a load is in flight.
           this._loadPending = true;
-          this._img.src = url;
-          this._ghost.src = url;
+          const __u = window.__fx ? window.__fx.slotUrl(this, url) : url;
+          if (__u) { this._img.src = __u; this._ghost.src = __u; }
         } else {
           // Same-src re-render — release if settled, so an ingest-set
           // spinner can't stick after a byte-identical re-upload (same
@@ -3579,7 +3627,10 @@
   }
 
   function start() {
-    try { light(); } catch (err) { /* the plain sheet stays */ }
+    /* The light is not needed for the first paint: build it when the browser is idle */
+    (window.requestIdleCallback || function (fn) { setTimeout(fn, 200); })(function () {
+      try { light(); } catch (err) { /* the plain sheet stays */ }
+    }, { timeout: 1500 });
     if (!reduce) {
       var q = 0;
       var go = function () { if (q) return; q = requestAnimationFrame(function () { q = 0; scrubUpdate(); }); };
