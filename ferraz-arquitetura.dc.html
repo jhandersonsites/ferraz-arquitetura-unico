@@ -4734,7 +4734,7 @@ class Component extends DCLogic {
         if (i === 0) play(el, { opacity: '0' }, { opacity: '1' }, 500, 80);
         else if (i <= 3) play(el, { clipPath: 'inset(-20% 0 100% 0)', transform: 'translateY(.28em)' }, { clipPath: 'inset(-20% 0 -20% 0)', transform: 'none' }, 900, 160 + (i - 1) * 110);
         else if (el.tagName === 'DIV' && i === 4) play(el, { transform: 'scaleX(0)', transformOrigin: 'left center' }, { transform: 'scaleX(1)' }, 700, 340);
-        else play(el, { opacity: '0', transform: 'translateY(12px)' }, { opacity: '1', transform: 'none' }, 700, 300 + (i - 4) * 110);   /* the paragraph is the largest text paint: it must not wait half a second */
+        else play(el, { opacity: '0', transform: 'translateY(12px)' }, { opacity: '1', transform: 'none' }, i === 4 ? 480 : 700, 160 + (i - 4) * 110);   /* the paragraph is the largest text paint: it must not wait half a second */
       });
       // Sections settle in with a short rise; the process timeline is drawn step by step.
       // A rAF-throttled sweep (not an observer) decides when: the runtime can re-create
