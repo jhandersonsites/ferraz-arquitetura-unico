@@ -4,7 +4,7 @@ Site de portfólio e captação por WhatsApp para escritórios de arquitetura e 
 
 ## Como ver
 
-Abra `index.html` (ou `ferraz-arquitetura.dc.html`) em um navegador atual, com internet. O arquivo é único: já inclui o motor que monta a página e o componente de imagens. A página busca o React, as fontes do Google e as fotos do Unsplash pela internet.
+Abra `index.html` (o mesmo conteúdo também está em `ferraz-arquitetura.dc.html`, mantido para links antigos) em um navegador atual, com internet. O arquivo é único: já inclui o motor que monta a página e o componente de imagens. A página busca o React, as fontes do Google e as fotos do Unsplash pela internet.
 
 ## O que tem
 
@@ -16,3 +16,6 @@ Abra `index.html` (ou `ferraz-arquitetura.dc.html`) em um navegador atual, com i
 ## Créditos
 
 As fotos são do Unsplash e levam crédito dentro da própria página.
+## Leitura sem JavaScript
+
+O texto do site (seções, projetos, serviços, etapas, depoimentos e dúvidas) também está dentro de `<noscript>`, e o título, a descrição e a foto de prévia (Open Graph) ficam no `<head>`, para leitores automáticos, buscadores simples e prévias de link no WhatsApp.
